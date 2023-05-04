@@ -1,11 +1,5 @@
-# disable the restart dialogue and install several packages
-sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 sudo apt-get update
 sudo apt install wget git python3 python3-venv build-essential net-tools awscli -y
-
-# install CUDA (from https://developer.nvidia.com/cuda-downloads)
-wget https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda_12.0.0_525.60.13_linux.run
-sudo sh cuda_12.0.0_525.60.13_linux.run --silent
 
 # install git-lfs
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
@@ -29,5 +23,10 @@ cp v2-inference.yaml stable-diffusion-webui/models/Stable-diffusion/v2-1_512-ema
 sudo chown -R ubuntu:ubuntu stable-diffusion-webui/
 
 # start the server as user 'ubuntu'
-sudo -u ubuntu nohup bash stable-diffusion-webui/webui.sh --listen > log.txt
+cd stable-diffusion-webui
+source venv/bin/activate
+pip install xformers
+pip install --force-reinstall httpcore==0.15
+
+sudo -u ubuntu nohup bash webui.sh --listen > log.txt
 
